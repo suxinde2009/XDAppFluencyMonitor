@@ -13,15 +13,9 @@
 		1F1F917F1D588E9200A3AEB4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F1F917D1D588E9200A3AEB4 /* Main.storyboard */; };
 		1F1F91811D588E9200A3AEB4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F1F91801D588E9200A3AEB4 /* Assets.xcassets */; };
 		1F1F91841D588E9200A3AEB4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F1F91821D588E9200A3AEB4 /* LaunchScreen.storyboard */; };
-		1F1F91911D588EB100A3AEB4 /* KSBacktrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F918D1D588EB100A3AEB4 /* KSBacktrace.c */; };
-		1F1F91921D588EB100A3AEB4 /* KSDynamicLinker.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F918F1D588EB100A3AEB4 /* KSDynamicLinker.c */; };
-		1F1F91981D588F3E00A3AEB4 /* KSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F91941D588F3E00A3AEB4 /* KSLogger.m */; };
-		1F1F91991D588F3E00A3AEB4 /* KSMach.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F91951D588F3E00A3AEB4 /* KSMach.c */; };
-		1F1F919E1D588F8900A3AEB4 /* KSMach_Arm.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F919A1D588F8900A3AEB4 /* KSMach_Arm.c */; };
-		1F1F919F1D588F8900A3AEB4 /* KSMach_Arm64.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F919B1D588F8900A3AEB4 /* KSMach_Arm64.c */; };
-		1F1F91A01D588F8900A3AEB4 /* KSMach_x86_32.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F919C1D588F8900A3AEB4 /* KSMach_x86_32.c */; };
-		1F1F91A11D588F8900A3AEB4 /* KSMach_x86_64.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F919D1D588F8900A3AEB4 /* KSMach_x86_64.c */; };
-		1F1F91A41D5890B600A3AEB4 /* XDAppFluencyMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F91A31D5890B600A3AEB4 /* XDAppFluencyMonitor.m */; };
+		1F1F91B81D59DB1900A3AEB4 /* UIDevice+afm_Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F91B31D59DB1900A3AEB4 /* UIDevice+afm_Hardware.m */; };
+		1F1F91B91D59DB1900A3AEB4 /* XDAppFluencyMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F91B51D59DB1900A3AEB4 /* XDAppFluencyMonitor.m */; };
+		1F1F91BA1D59DB1900A3AEB4 /* XDMachThreadBacktrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F1F91B61D59DB1900A3AEB4 /* XDMachThreadBacktrace.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,23 +29,12 @@
 		1F1F91801D588E9200A3AEB4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1F1F91831D588E9200A3AEB4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1F1F91851D588E9200A3AEB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1F1F918B1D588EB100A3AEB4 /* KSArchSpecific.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSArchSpecific.h; sourceTree = "<group>"; };
-		1F1F918C1D588EB100A3AEB4 /* KSBacktrace_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSBacktrace_Private.h; sourceTree = "<group>"; };
-		1F1F918D1D588EB100A3AEB4 /* KSBacktrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSBacktrace.c; sourceTree = "<group>"; };
-		1F1F918E1D588EB100A3AEB4 /* KSBacktrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSBacktrace.h; sourceTree = "<group>"; };
-		1F1F918F1D588EB100A3AEB4 /* KSDynamicLinker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSDynamicLinker.c; sourceTree = "<group>"; };
-		1F1F91901D588EB100A3AEB4 /* KSDynamicLinker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSDynamicLinker.h; sourceTree = "<group>"; };
-		1F1F91931D588F3E00A3AEB4 /* KSLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSLogger.h; sourceTree = "<group>"; };
-		1F1F91941D588F3E00A3AEB4 /* KSLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSLogger.m; sourceTree = "<group>"; };
-		1F1F91951D588F3E00A3AEB4 /* KSMach.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSMach.c; sourceTree = "<group>"; };
-		1F1F91961D588F3E00A3AEB4 /* KSMach.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSMach.h; sourceTree = "<group>"; };
-		1F1F91971D588F3E00A3AEB4 /* KSMachApple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSMachApple.h; sourceTree = "<group>"; };
-		1F1F919A1D588F8900A3AEB4 /* KSMach_Arm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSMach_Arm.c; sourceTree = "<group>"; };
-		1F1F919B1D588F8900A3AEB4 /* KSMach_Arm64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSMach_Arm64.c; sourceTree = "<group>"; };
-		1F1F919C1D588F8900A3AEB4 /* KSMach_x86_32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSMach_x86_32.c; sourceTree = "<group>"; };
-		1F1F919D1D588F8900A3AEB4 /* KSMach_x86_64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSMach_x86_64.c; sourceTree = "<group>"; };
-		1F1F91A21D5890B600A3AEB4 /* XDAppFluencyMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XDAppFluencyMonitor.h; sourceTree = "<group>"; };
-		1F1F91A31D5890B600A3AEB4 /* XDAppFluencyMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XDAppFluencyMonitor.m; sourceTree = "<group>"; };
+		1F1F91B21D59DB1900A3AEB4 /* UIDevice+afm_Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+afm_Hardware.h"; sourceTree = "<group>"; };
+		1F1F91B31D59DB1900A3AEB4 /* UIDevice+afm_Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+afm_Hardware.m"; sourceTree = "<group>"; };
+		1F1F91B41D59DB1900A3AEB4 /* XDAppFluencyMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XDAppFluencyMonitor.h; sourceTree = "<group>"; };
+		1F1F91B51D59DB1900A3AEB4 /* XDAppFluencyMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XDAppFluencyMonitor.m; sourceTree = "<group>"; };
+		1F1F91B61D59DB1900A3AEB4 /* XDMachThreadBacktrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XDMachThreadBacktrace.c; sourceTree = "<group>"; };
+		1F1F91B71D59DB1900A3AEB4 /* XDMachThreadBacktrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XDMachThreadBacktrace.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,23 +67,7 @@
 		1F1F91731D588E9200A3AEB4 /* XDAppFluencyMonitor */ = {
 			isa = PBXGroup;
 			children = (
-				1F1F91A21D5890B600A3AEB4 /* XDAppFluencyMonitor.h */,
-				1F1F91A31D5890B600A3AEB4 /* XDAppFluencyMonitor.m */,
-				1F1F919A1D588F8900A3AEB4 /* KSMach_Arm.c */,
-				1F1F919B1D588F8900A3AEB4 /* KSMach_Arm64.c */,
-				1F1F919C1D588F8900A3AEB4 /* KSMach_x86_32.c */,
-				1F1F919D1D588F8900A3AEB4 /* KSMach_x86_64.c */,
-				1F1F91931D588F3E00A3AEB4 /* KSLogger.h */,
-				1F1F91941D588F3E00A3AEB4 /* KSLogger.m */,
-				1F1F91951D588F3E00A3AEB4 /* KSMach.c */,
-				1F1F91961D588F3E00A3AEB4 /* KSMach.h */,
-				1F1F91971D588F3E00A3AEB4 /* KSMachApple.h */,
-				1F1F918B1D588EB100A3AEB4 /* KSArchSpecific.h */,
-				1F1F918C1D588EB100A3AEB4 /* KSBacktrace_Private.h */,
-				1F1F918D1D588EB100A3AEB4 /* KSBacktrace.c */,
-				1F1F918E1D588EB100A3AEB4 /* KSBacktrace.h */,
-				1F1F918F1D588EB100A3AEB4 /* KSDynamicLinker.c */,
-				1F1F91901D588EB100A3AEB4 /* KSDynamicLinker.h */,
+				1F1F91B11D59DB1900A3AEB4 /* XDAppFluencyMonitor */,
 				1F1F91771D588E9200A3AEB4 /* AppDelegate.h */,
 				1F1F91781D588E9200A3AEB4 /* AppDelegate.m */,
 				1F1F917A1D588E9200A3AEB4 /* ViewController.h */,
@@ -120,6 +87,20 @@
 				1F1F91751D588E9200A3AEB4 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1F1F91B11D59DB1900A3AEB4 /* XDAppFluencyMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				1F1F91B21D59DB1900A3AEB4 /* UIDevice+afm_Hardware.h */,
+				1F1F91B31D59DB1900A3AEB4 /* UIDevice+afm_Hardware.m */,
+				1F1F91B41D59DB1900A3AEB4 /* XDAppFluencyMonitor.h */,
+				1F1F91B51D59DB1900A3AEB4 /* XDAppFluencyMonitor.m */,
+				1F1F91B61D59DB1900A3AEB4 /* XDMachThreadBacktrace.c */,
+				1F1F91B71D59DB1900A3AEB4 /* XDMachThreadBacktrace.h */,
+			);
+			name = XDAppFluencyMonitor;
+			path = ../../XDAppFluencyMonitor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,17 +173,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F1F919F1D588F8900A3AEB4 /* KSMach_Arm64.c in Sources */,
-				1F1F91921D588EB100A3AEB4 /* KSDynamicLinker.c in Sources */,
-				1F1F91911D588EB100A3AEB4 /* KSBacktrace.c in Sources */,
-				1F1F91991D588F3E00A3AEB4 /* KSMach.c in Sources */,
-				1F1F91A41D5890B600A3AEB4 /* XDAppFluencyMonitor.m in Sources */,
-				1F1F91A11D588F8900A3AEB4 /* KSMach_x86_64.c in Sources */,
-				1F1F919E1D588F8900A3AEB4 /* KSMach_Arm.c in Sources */,
+				1F1F91B81D59DB1900A3AEB4 /* UIDevice+afm_Hardware.m in Sources */,
+				1F1F91B91D59DB1900A3AEB4 /* XDAppFluencyMonitor.m in Sources */,
 				1F1F917C1D588E9200A3AEB4 /* ViewController.m in Sources */,
-				1F1F91981D588F3E00A3AEB4 /* KSLogger.m in Sources */,
+				1F1F91BA1D59DB1900A3AEB4 /* XDMachThreadBacktrace.c in Sources */,
 				1F1F91791D588E9200A3AEB4 /* AppDelegate.m in Sources */,
-				1F1F91A01D588F8900A3AEB4 /* KSMach_x86_32.c in Sources */,
 				1F1F91761D588E9200A3AEB4 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -269,7 +244,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "5f940c99-0a59-4f49-8633-3f54ce722c63";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -308,7 +283,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "5f940c99-0a59-4f49-8633-3f54ce722c63";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -321,7 +296,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = XDAppFluencyMonitor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.meitu.XDAppFluencyMonitor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.su.XDAppFluencyMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -332,7 +307,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = XDAppFluencyMonitor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.meitu.XDAppFluencyMonitor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.su.XDAppFluencyMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -356,6 +331,7 @@
 				1F1F918A1D588E9200A3AEB4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

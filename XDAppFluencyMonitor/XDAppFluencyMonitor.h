@@ -1,6 +1,6 @@
 //
-//  MTAppFluencyMonitor.h
-//  MTAppFluencyMonitorDemo
+//  XDAppFluencyMonitor.h
+//  XDAppFluencyMonitorDemo
 //
 //  Created by suxinde on 16/8/5.
 //  Copyright © 2016年 com.su. All rights reserved.
@@ -13,6 +13,8 @@
  */
 @interface XDAppFluencyMonitor : NSObject
 
+@property (nonatomic, assign) BOOL logsEnabled;
+
 + (instancetype)sharedInstance;
 
 /**
@@ -20,6 +22,10 @@
  */
 - (void)startMonitoring;
 
+/**
+ *  关闭监听
+ */
 - (void)stopMonitoring;
 
 @end
+

@@ -1,45 +1,101 @@
 //
-//  MTAppFluencyMonitor.m
-//  MTAppFluencyMonitorDemo
+//  XDAppFluencyMonitor.m
+//  XDAppFluencyMonitorDemo
 //
 //  Created by suxinde on 16/8/5.
 //  Copyright © 2016年 com.su. All rights reserved.
 //
 
 #import "XDAppFluencyMonitor.h"
-
 #import <libkern/OSAtomic.h>
 #import <execinfo.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <execinfo.h>
+#import <UIKit/UIKit.h>
 
-#import "KSDynamicLinker.h"
-#import "KSBacktrace.h"
+#import "XDMachThreadBacktrace.h"
+#import "UIDevice+afm_Hardware.h"
+
+/* 
+ 参考：
+ Printing a stack trace from another thread
+ http://stackoverflow.com/questions/4765158/printing-a-stack-trace-from-another-thread
+ 
+ What you do is:
+ 
+ 1. Make a new machine context structure (_STRUCT_MCONTEXT)
+ 2. Fill in its stack state using thread_get_state()
+ 3. Get the program counter (first stack trace entry) and frame pointer (all the rest)
+ Step through the stack frame pointed to by the frame pointer and store all instruction addresses in a buffer for later use.
+ 
+ 4. Note that you should pause the thread before doing this or else you can get unpredictable results.
+    The stack frame is filled with structures containing two pointers:
+    (1) Pointer to the next level up on the stack
+    (2) Instruction address
+ 
+ So you need to take that into account when walking the frame to fill out your stack trace. There's also the possibility of a corrupted stack, leading to a bad pointer, which will crash your program. You can get around this by copying memory using vm_read_overwrite(), which first asks the kernel if it has access to the memory, so it doesn't crash.
+ 
+ Once you have the stack trace, you can just call backtrace() on it like normal (The crash handler has to be async-safe so it implements its own backtrace method, but in normal cases backtrace() is fine).
+ 
+*/
 
 
-static NSString *const kMTAppFluencyLogFilesDirectory = @"MTAppFluencyLogFilesDirectory";
+static NSString *const kMTAppFluencyLogFilesDirectory = @"XDAppFluencyLogFilesDirectory";
 
-static dispatch_queue_t mt_fluency_monitor_queue() {
-    static dispatch_queue_t mt_fluency_monitor_queue;
+dispatch_queue_t xd_fluency_monitor_queue() {
+    static dispatch_queue_t xd_fluency_monitor_queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        mt_fluency_monitor_queue = dispatch_queue_create("com.meitu.diary.mt_fluency_monitor_queue", NULL);
+        xd_fluency_monitor_queue = dispatch_queue_create("com.su.diary.xd_fluency_monitor_queue", NULL);
     });
-    return mt_fluency_monitor_queue;
+    return xd_fluency_monitor_queue;
 }
 
+dispatch_queue_t xd_fluency_monitor_logs_queue() {
+    static dispatch_queue_t xd_fluency_monitor_logs_queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        xd_fluency_monitor_logs_queue = dispatch_queue_create("com.su.diary.xd_fluency_monitor_logs_queue", NULL);
+    });
+    return xd_fluency_monitor_logs_queue;
+}
 
-@interface XDAppFluencyMonitor (LogsDirectory)
+@interface XDAppFluencyLogsFileManager : NSObject
 
-- (NSString *)logsDirectory;
++ (NSString *)logsDirectory;
+
++ (NSString *)timeStamp;
+
++ (NSString *)logFileName;
+
++ (void)writeLogsToLogDirectory:(NSString *)logs;
 
 @end
 
-@implementation XDAppFluencyMonitor (LogsDirectory)
+@implementation XDAppFluencyLogsFileManager
 
-- (NSString *)logsDirectory
++ (NSString *)timeStamp
+{
+    NSDate *curDate = [NSDate date];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    df.timeZone = [NSTimeZone localTimeZone];
+    df.dateFormat = @"yyyyMMddHHmmssSSS";
+    NSString *timeStamp = [df stringFromDate:curDate];
+    return timeStamp;
+}
+
++ (NSString *)logFileName
+{
+    NSString *logFileName = [NSString stringWithFormat:@"%@_%@.txt", [NSUUID UUID].UUIDString, [[self class] timeStamp]];
+    return logFileName;
+}
+
+/**
+ *  log存放文件夹
+ */
++ (NSString *)logsDirectory
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -63,16 +119,32 @@ static dispatch_queue_t mt_fluency_monitor_queue() {
     }
     
     return logsDirectory;
+    
+}
 
++ (void)writeLogsToLogDirectory:(NSString *)logs
+{
+    dispatch_async(xd_fluency_monitor_logs_queue(), ^{
+        NSData *logsData = [logs dataUsingEncoding:NSUTF8StringEncoding];
+        if (logsData) {
+            NSString *logFileName = [XDAppFluencyLogsFileManager logFileName];
+            NSString *filePath = [[XDAppFluencyLogsFileManager logsDirectory] stringByAppendingPathComponent:logFileName];
+            BOOL reslut = [logsData writeToFile:filePath atomically:YES];
+            if (reslut != YES) {
+                NSLog(@"%s: 保存App卡顿日志文件失败", __FUNCTION__);
+            }
+        }
+ 
+    });
 }
 
 @end
+
 
 @interface XDAppFluencyMonitor () {
 @private
     NSInteger _timeoutCount;
     CFRunLoopObserverRef _runLoopObserver;
-    NSMutableArray *_callStacks;
 }
 
 @property (nonatomic, strong) dispatch_semaphore_t semaphore;
@@ -91,6 +163,27 @@ static void runLoopObserverCallBack(CFRunLoopObserverRef observer,
     dispatch_semaphore_signal(appFluencyMonitor.semaphore);
 }
 
+
+
+- (void)dealloc
+{
+    [self stopMonitoring];
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+        [self commonInit];
+    }
+    return self;
+}
+
+- (void)commonInit
+{
+    self.logsEnabled = YES;
+}
+
+#pragma mark - Public Methods
+
 + (instancetype)sharedInstance
 {
     static id __sharedInstance = nil;
@@ -101,35 +194,16 @@ static void runLoopObserverCallBack(CFRunLoopObserverRef observer,
     return __sharedInstance;
 }
 
-- (void)dealloc
+- (void)stopMonitoring
 {
-    @autoreleasepool {
-        [_callStacks removeAllObjects];
-        _callStacks = nil;
-    }
-    [self stopMonitoring];
-}
-
-- (instancetype)init {
-    if (self = [super init]) {
-        _callStacks = [[NSMutableArray alloc] initWithCapacity:0];
-    }
-    return self;
-}
-
-- (void)logcallStacks {
-    void* callstack[128];
-    int frames = backtrace(callstack, 128);
-    char **strs = backtrace_symbols(callstack, frames);
-    int i;
-    [_callStacks removeAllObjects];
-    for ( i = 0 ; i < frames ; i++ ){
-        [_callStacks addObject:[NSString stringWithUTF8String:strs[i]]];
-    }
-    free(strs);
+    if (!_runLoopObserver)
+        return;
     
-    NSLog(@"%@", _callStacks);
+    CFRunLoopRemoveObserver(CFRunLoopGetMain(), _runLoopObserver, kCFRunLoopCommonModes);
+    CFRelease(_runLoopObserver);
+    _runLoopObserver = NULL;
 }
+
 
 - (void)startMonitoring
 {
@@ -169,11 +243,11 @@ static void runLoopObserverCallBack(CFRunLoopObserverRef observer,
                          kCFRunLoopCommonModes);
     
     // 在子线程监控时长
-    dispatch_async(mt_fluency_monitor_queue(), ^{
+    dispatch_async(xd_fluency_monitor_queue(), ^{
         while (YES)
         {
-            // 假定连续5次超时50ms认为卡顿(也包含了单次超时250ms)
-            long st = dispatch_semaphore_wait(self.semaphore, dispatch_time(DISPATCH_TIME_NOW, 50*NSEC_PER_MSEC));
+            // 假定连续5次超时100ms认为卡顿(也包含了单次超时500ms)
+            long st = dispatch_semaphore_wait(self.semaphore, dispatch_time(DISPATCH_TIME_NOW, 500*NSEC_PER_MSEC));
             if (st != 0) {
                 if (!_runLoopObserver) {
                     _timeoutCount = 0;
@@ -199,114 +273,100 @@ static void runLoopObserverCallBack(CFRunLoopObserverRef observer,
 }
 
 
-//void my_backtrace2()
-//{
-//    void *buffer[100] = { NULL };
-//    char **trace = NULL;
-//    int size = backtrace(buffer, 100);
-//    trace = backtrace_symbols(buffer, size);
-//    if (NULL == trace) {
-//        return;
-//    }
-//    
-//    size_t name_size = 100;
-//    char *name = (char*)malloc(name_size);
-//    for (int i = 0; i < size; ++i) {
-//        char *begin_name = 0;
-//        char *begin_offset = 0;
-//        char *end_offset = 0;
-//        for (char *p = trace[i]; *p; ++p) { // 利用了符号信息的格式
-//            if (*p == '(') { // 左括号
-//                begin_name = p;
-//            }
-//            else if (*p == '+' && begin_name) { // 地址偏移符号
-//                begin_offset = p;
-//            }
-//            else if (*p == ')' && begin_offset) { // 右括号
-//                end_offset = p;
-//                break;
-//            }
-//        }
-//        if (begin_name && begin_offset && end_offset ) {
-//            *begin_name++ = '\0';
-//            *begin_offset++ = '\0';
-//            *end_offset = '\0';
-//            int status = -4; // 0 -1 -2 -3
-////            char *ret = abi::__cxa_demangle(begin_name, name, &name_size, &status);
-////            if (0 == status) {
-////                name = ret;
-////                printf("%s:%s+%s\n", trace[i], name, begin_offset);
-////            }
-////            else {
-////                printf("%s:%s()+%s\n", trace[i], begin_name, begin_offset);
-////            }
-//        }
-//        else {
-//            printf("%s\n", trace[i]);
-//        }
-//    }
-//    free(name);
-//    free(trace);
-//    printf("----------done----------\n");
-//}
+#pragma mark - Private Methods
 
-- (void)logCallStacks
-{
-    void *callStack[128];
-    int frames = backtrace(callStack, 128);
-    char **strs = backtrace_symbols(callStack, frames);
-    int i;
-    NSMutableArray *backtrace = [NSMutableArray arrayWithCapacity:frames];
-    for (i = 0; i < frames; i++) {
-        [backtrace addObject:[NSString stringWithUTF8String:strs[i]]];
-    }
-    free(strs);
-    NSLog(@"=============:\n %@ \n", backtrace);
-}
-
-
- // TODO: 对callback调用栈信息做处理
 - (void)handleCallbacksStackForMainThreadStucked
 {
-    // 打印Log，并将Log信息保存到本地Log.db文件
-    dispatch_async(dispatch_get_main_queue(), ^{
-       //NSLog(@"%@", [NSThread callStackSymbols]);
-         [self logCallStacks];
-        
-        uintptr_t* backtraceBuffer = {0};
-        mach_port_t thread_id = mach_thread_self();
-        
-        uintptr_t address =
-        ksbt_backtracePthread(thread_id,
-                              backtraceBuffer,
-                              100);
-        
-        
-        
-        
-    });
+    NSString *backtraceLogs = [self formatBacktraceLogsForAllThreads];
     
-//    [self logcallStacks];
+    [XDAppFluencyLogsFileManager writeLogsToLogDirectory:backtraceLogs];
 }
 
+- (NSString * _Nonnull)formatBacktraceForThread:(thread_t)thread {
+    
+    int const maxStackDepth = 128;
+    
+    void **backtraceStack = calloc(maxStackDepth, sizeof(void *));
+    int backtraceCount = sxd_backtraceForMachThread(thread, backtraceStack, maxStackDepth);
+    char **backtraceStackSymbols = backtrace_symbols(backtraceStack, backtraceCount);
 
+    NSMutableString *stackTrace = [NSMutableString string];
+    for (int i = 0; i < backtraceCount; ++i) {
+        char *currentStackInfo = backtraceStackSymbols[i];
+        [stackTrace appendString:[NSString stringWithUTF8String:currentStackInfo]];
+        [stackTrace appendFormat:@"\n"];
+    }
+    return stackTrace;
+}
 
-
-- (void)stopMonitoring
+- (NSString *)formatBacktraceLogsForAllThreads
 {
-    if (!_runLoopObserver)
-        return;
+    // 1. 获取所有线程
+    mach_msg_type_number_t threadCount;
+    thread_act_array_t threadList;
+    kern_return_t kret;
     
-    CFRunLoopRemoveObserver(CFRunLoopGetMain(), _runLoopObserver, kCFRunLoopCommonModes);
-    CFRelease(_runLoopObserver);
-    _runLoopObserver = NULL;
+    kret = task_threads(mach_task_self(), &threadList, &threadCount);
+    if (kret != KERN_SUCCESS) {
+        if (self.logsEnabled) {
+            NSLog(@"获取线程列表失败: %s\n", mach_error_string(kret));
+        }
+        // 获取线程列表失败，运行中的线程的调用栈将不精确，没有收集的必要，直接返回空
+        return nil;
+    }
+
+    // 2. 挂起所有线程，保证call stack信息的精确性
+    thread_t selfThread = mach_thread_self();
+    for (int i = 0; i < threadCount; ++i) {
+        if (threadList[i] != selfThread) {
+            thread_suspend(threadList[i]);
+        }
+    }
+
+    // 3. 获取所有线程的backtrace信息
+    NSMutableArray *backTracesArray = [[NSMutableArray alloc] initWithCapacity:0];
+    for (int i = 0; i < threadCount; ++i) {
+        thread_t tmpThread = threadList[i];
+        NSString *backTrace = [self formatBacktraceForThread:tmpThread];
+        if (backTrace) {
+            [backTracesArray addObject:backTrace];
+        }
+    }
+    
+    // 4. 激活被挂起的线程
+    for (int i = 0; i < threadCount; ++i) {
+        thread_resume(threadList[i]);
+    }
+
+    // 5. 格式化输出backtrace log信息,写入日记文件
+    NSMutableString *logs = nil;
+    if (backTracesArray.count) {
+        
+        NSString *timeStamp = [XDAppFluencyLogsFileManager timeStamp];
+        
+        logs = [[NSMutableString alloc] initWithCapacity:0];
+        
+        [logs appendFormat:@"\n**************************************\n"];
+        [logs appendFormat:@"Time: %@\n", timeStamp];
+        UIDevice *device = [UIDevice currentDevice];
+        [logs appendFormat:@"Device: %@, %@\n\n", device.platformString, device.systemVersion];
+        for(NSInteger idx = 0; idx < backTracesArray.count; idx++) {
+            [logs appendFormat:@"%@", backTracesArray[idx]];
+            [logs appendFormat:@"\n\n\n"];
+        }
+        [logs appendFormat:@"\n**************************************\n\n\n"];
+    }
+    
+    
+    if (self.logsEnabled) {
+        NSLog(@"%@", logs);
+    }
+    
+    return logs;
 }
-
-
-
-
-
 
 
 
 @end
+
+

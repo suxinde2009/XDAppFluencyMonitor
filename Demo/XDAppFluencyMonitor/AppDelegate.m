@@ -3,7 +3,7 @@
 //  XDAppFluencyMonitor
 //
 //  Created by suxinde on 16/8/8.
-//  Copyright © 2016年 com.meitu. All rights reserved.
+//  Copyright © 2016年 com.su. All rights reserved.
 //
 
 #import "AppDelegate.h"
@@ -18,7 +18,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    
+
     [[XDAppFluencyMonitor sharedInstance] startMonitoring];
     
     return YES;
